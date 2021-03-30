@@ -1,0 +1,59 @@
+{
+    "maeve *": {
+        "maeve": "https://static.wikia.nocookie.net/paladins_gamepedia/images/c/c1/Maeve_SP_Select.ogg",
+        "they're blind!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/6/60/Maeve_SP_AbilityUltimate_Friendly.ogg",
+        "ultimate": "https://static.wikia.nocookie.net/paladins_gamepedia/images/2/2a/Maeve_Ult.ogg",
+        "knife to meet you": "https://static.wikia.nocookie.net/paladins_gamepedia/images/2/2a/Maeve_Ult.ogg",
+        "looking sharp": "https://static.wikia.nocookie.net/paladins_gamepedia/images/f/ff/Maeve_TR_Kill_Assist_1.ogg",
+        "like a hot knife through butter": "https://static.wikia.nocookie.net/paladins_gamepedia/images/9/9e/Maeve_TR_Kill_Streak_3.ogg",
+        "my prince": "https://static.wikia.nocookie.net/paladins_gamepedia/images/c/c1/Maeve_TR_Taunt_Directed_Shalin_1.ogg",
+        "nice pants": "https://static.wikia.nocookie.net/paladins_gamepedia/images/3/34/Maeve_TR_Taunt_Directed_Shalin_2.ogg",
+        "you can't catch me!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/6/62/Maeve_SP_Taunt_1.ogg",
+        "die already": "https://static.wikia.nocookie.net/paladins_gamepedia/images/7/72/Maeve_TR_StandingOnPointAndFiring_2.ogg",
+        "i can't stop!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/9/93/Maeve_Skin03_TR_Kill_Streak_2.ogg",
+        "retarded meowing darude maevestorm": "https://static.wikia.nocookie.net/paladins_gamepedia/images/b/b2/Maeve_Skin03_TR_Idle_1.ogg",
+        "slice it, dice it, flank it, tank it, cap it, push it, now let's play it!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/a/a3/Maeve_Skin03_SP_Intro_1.ogg"
+
+        },
+    "sha-lin *": {
+        "sha lin": "https://static.wikia.nocookie.net/paladins_gamepedia/images/3/3c/Sha_Lin_SP_Select.ogg",
+        "no": "https://static.wikia.nocookie.net/paladins_gamepedia/images/e/ef/Sha_Lin_VGS_Emote_No.ogg",
+        "your sight fails you!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/e/e0/Sha_Lin_SP_AbilityUltimate_Enemy.ogg",
+        "my wounds won't hold me back!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/a/a1/Sha_Lin_TR_Health_Low_2.ogg",
+        "you have done me great service": "https://static.wikia.nocookie.net/paladins_gamepedia/images/5/5e/Sha_Lin_TR_Kill_Assist_2.ogg",
+        "if i must fight, i will win": "https://static.wikia.nocookie.net/paladins_gamepedia/images/9/91/Sha_Lin_TR_FirstBlood.ogg",
+        "legions fall to my bow!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/5/50/Sha_Lin_TR_Kill_Streak_2.ogg"
+        },
+    "lex *": {
+        "no one escapes the law!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/9/95/Lex_SP_AbilityUltimate_Enemy.ogg",
+        "spend your credits before i spend them for you": "https://static.wikia.nocookie.net/paladins_gamepedia/images/2/2c/Lex_TR_Item_Reminder_1.ogg"
+        },
+    "koga *": {
+        "koga": "https://static.wikia.nocookie.net/paladins_gamepedia/images/d/d5/Koga_Skin03_SP_Select.ogg",
+        "brooo": "https://static.wikia.nocookie.net/paladins_gamepedia/images/9/9e/Koga_Skin03_NV_Falling_3.ogg"
+    },
+    "corvus *": {
+        "that counts as mine, right?": "https://static.wikia.nocookie.net/paladins_gamepedia/images/5/56/Corvus_TR_Kill_Assist_1.ogg",
+        "what i do is for the good of the the magistrate, and the realm": "https://static.wikia.nocookie.net/paladins_gamepedia/images/a/a6/Corvus_SP_Intro_1.ogg",
+        "i have the power of the abyss and the magistrate on my side!": "https://static.wikia.nocookie.net/paladins_gamepedia/images/a/a5/Corvus_SP_Joke_7.ogg"
+    },
+    "seris *": {
+        "gaze into the abyss": "https://static.wikia.nocookie.net/paladins_gamepedia/images/d/dc/Seris_SP_AbilityUltimate_Enemy.ogg",
+        "reality is an opinion, one that i disagree with": "https://static.wikia.nocookie.net/paladins_gamepedia/images/a/ac/Seris_TR_Respawn_1.ogg"
+    },
+    "ruckus *": {
+        "retarded machinegun": "https://static.wikia.nocookie.net/paladins_gamepedia/images/3/36/Ruckus_SP_Weapon_1.ogg"
+    },
+    "ash *": {
+        "show me your cannon, tough guy. i bet mine's bigger.": "https://static.wikia.nocookie.net/paladins_gamepedia/images/9/98/Flak_TR_Taunt_Directed_Makoa_1.ogg",
+        "follow my lead": "https://static.wikia.nocookie.net/paladins_gamepedia/images/a/ac/Flak_SP_Weapon_2.ogg"
+    },
+    "makoa *": {
+        "you challenge makoa?": "https://static.wikia.nocookie.net/paladins_gamepedia/images/3/3f/Makoa_SP_AbilityUltimate_1.ogg"
+    },
+    "miscellaneous *": {
+        "weather": "https://download.realmp3.fun/e/Rick-Astley-Never-Gonna-Give-You-Up.mp3"
+    }
+
+
+}
