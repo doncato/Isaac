@@ -17,23 +17,6 @@ class events(commands.Cog):
             data = json.load(f)
         return data
 
-    async def send_twitch_notification(self, name):
-        settings = self.load_settings()['settings']['twitch_notify_channel']
-        embed = discord.Embed(title=f'{name} just started Streaming!', color=discord.Color.from_rgb(100,65,165), description=f'Go visit\nhttps://www.twitch.tv/{name}\nand view the Stream!')
-        embed.set_thumbnail(url='http://pngimg.com/uploads/twitch/twitch_PNG12.png')
-        for e in settings.keys():
-            guild = self.bot.get_guild(int(e))
-            channel_id = settings[e].replace('<#', '').replace('>', '')
-            try:
-                channel = guild.get_channel(int(channel_id))
-            except:
-                pass
-            else:
-                if channel != None:
-                    await channel.send(embed=embed)
-                    time.sleep(0.5)
-
-
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
         channel = guild.system_channel
