@@ -152,7 +152,7 @@ class utility(commands.Cog):
             voice_channel = user.voice.channel 
             if voice_channel != None:
                 if ctx.guild.voice_client != None:
-                    await ctx.guild.voice_client.disconnect(voice_channel)
+                    await ctx.guild.voice_client.disconnect()
                     await voice_channel.connect()
                     txt = f'I just moved to *{voice_channel.name}* along with *{user.name}*'
                 else:
