@@ -175,6 +175,10 @@ class utility(commands.Cog):
                 while ctx.guild.voice_client.is_playing():
                     time.sleep(0.5)
                 await ctx.guild.voice_client.disconnect()
+                # I'm not sure if this works correctly, but if it does,
+                # it cleans up remaining voice_clients
+                if ctx.guild.voice_client != None:
+                    ctx.guild.voice_client.cleanup()
                 txt = 'Disconnected from Voice Channel'
         
         elif command.lower().startswith('p'):

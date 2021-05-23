@@ -10,7 +10,7 @@ class system(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.filepath = os.path.join(os.path.dirname(__file__), '../settings.json')
-        self.docpath = os.path.join(os.path.dirname(__file__), '../src/docs.txt')
+        self.docpath = os.path.join(os.path.dirname(__file__), '../src/docs.md')
         self.logpath = os.path.join(os.path.dirname(__file__), '../src/isaac.log')
 
     def load_settings(self):
@@ -18,6 +18,54 @@ class system(commands.Cog):
             data = json.load(f)
         return data
     
+    @commands.command(name='autoroles', brief='Set autoroles for the server!')
+    @commands.has_permissions(administrator=True)
+    async def autoroles(self, ctx, action="show", message_id=0, emoji='', role_id=0, channel_id=0):
+        og_set = self.load_settings()
+        settings = og_set['autoroles']
+
+        if action.lower() == "show":
+            stringify = []
+            if settings.get(str(ctx.guild.id)) != None:
+                for m_id in settings[str(ctx.guild.id)].keys():
+                    for emoji in settings[str(ctx.guild.id)][m_id].keys():
+                        stringify.append(f'{m_id}: {emoji} -> {settings[str(ctx.guild.id)][m_id][emoji]}')
+                await ctx.send(embed=discord.Embed(title='Autoroles Settings', color=(ctx.guild.get_member_named(str(self.bot.user))).color, description="\n".join(stringify)))
+            else:
+                await ctx.send(embed=discord.Embed(title='Autoroles', color=(ctx.guild.get_member_named(str(self.bot.user))).color, description="n/a"))
+
+        elif action.lower() == "add":
+            if settings.get(str(ctx.guild.id)) == None:
+                settings.update({str(ctx.guild.id): {}})
+            local_settings = settings.get(str(ctx.guild.id))
+
+            if local_settings.get(str(message_id)) != None:
+                local_settings[str(message_id)][str(emoji)] = str(role_id)
+            else:                
+                local_settings.update({str(message_id): {str(emoji): str(role_id)}})
+
+            with open(self.filepath, 'w') as f:
+                f.write(json.dumps(og_set))
+
+            msg = await ctx.guild.get_channel(channel_id).fetch_message(message_id)
+            try:
+                await msg.add_reaction(emoji)
+            finally:
+                await ctx.message.add_reaction('✅')
+
+        elif action.lower().startswith("rem") or action.lower().startswith("del"):
+            if settings.get(str(message_id)) != None:
+                if settings[str(message_id)].get(str(emoji)) != None:
+                    settings[str(message_id)].pop(str(emoji))
+                    
+                    with open(self.filepath, 'w') as f:
+                        f.write(json.dumps(og_set))
+                    await ctx.message.add_reaction('✅')
+                else:
+                    await ctx.message.add_reaction('❌')
+            else:
+                await ctx.message.add_reaction('❌')
+
     @commands.command(name='manager_vc', brief='Returns a help for vc management')
     async def vcmanage(self, ctx):
         await ctx.send(embed=discord.Embed(title='Voice Channels', color=(ctx.guild.get_member_named(str(self.bot.user))).color, description='The bot can create and delete voice chats automatically. Voice chats that start with \'µ\' in their name will spawn a new vc on connection by a user, and move that user in that vc. Channels that end with \'µ\' are mainly used by the bot, and mark temporary channels, which will be deleted if all users left. Note: The Create-vc channel has to have a userlimit between 1 and 3 (enpoints included)'))
@@ -50,7 +98,7 @@ class system(commands.Cog):
     @commands.command(name='get-logs', brief='Retreive the log file of Isaac')
     @commands.is_owner()
     @commands.cooldown(1, 30)
-    async def docs(self, ctx):
+    async def logs(self, ctx):
         await ctx.send(file=discord.File(self.logpath))
 
 class admin(commands.Cog):

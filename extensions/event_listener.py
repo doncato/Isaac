@@ -20,25 +20,52 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
         channel = guild.system_channel
-        send_welcome = self.load_settings()['settings']["send_event_msg"]
+        send_welcome = self.load_settings()['settings']["send_ban_msg"]
         send = str(send_welcome.get(str(guild.id)))
-        if send.lower().startswith('t') or send.lower().startswith('y'):
-            await channel.send(embed=discord.Embed(title='Oufff', color=discord.Color.blue(), description=f'{user.name} just got banned from this server\nHopefully this was for the greater good.',))
+        if str(send) != "." and send != None:
+            await channel.send(embed=discord.Embed(title=f'{user.name} got Banned!', color=discord.Color.blue(), description=send))
     @commands.Cog.listener()
     async def on_member_unban(self, guild, user):
         channel = guild.system_channel
-        send_welcome = self.load_settings()['settings']["send_event_msg"]
+        send_welcome = self.load_settings()['settings']["send_unban_msg"]
         send = send_welcome.get(str(guild.id))
-        if str(send).lower().startswith('t') or str(send).lower().startswith('y'):
-            await channel.send(embed=discord.Embed(title='*Click*', color=discord.Color.blue(), description=f'{user.name} just got un-banned!\nMaybe someone had second thoughts?'))
+        if str(send) != "." and send != None:
+            await channel.send(embed=discord.Embed(title=f'{user.name} got Unbanned', color=discord.Color.blue(), description=send))
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = member.guild.system_channel
-        send_welcome = self.load_settings()['settings']["send_event_msg"]
+        send_welcome = self.load_settings()['settings']["send_welcome_msg"]
         send = send_welcome.get(str(member.guild.id))
-        if str(send).lower().startswith('t') or str(send).lower().startswith('y'):
-            await channel.send(embed=discord.Embed(title=f'Another plonker joined: {str(member)}', color=discord.Color.blue(), description=f'You can feel free to Fuck Off again!'))
+        if str(send) != "." and send != None:
+            await channel.send(embed=discord.Embed(title=f'{member.name} just joined!', color=discord.Color.blue(), description=send))
     
+    # Autoroles, will check settings and try to add a role upon a reaction by the user on set message.
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        if payload.member != self.bot.user:
+            settings = self.load_settings()["autoroles"].get(str(payload.guild_id))
+            if settings != None:
+                emoji = settings.get(str(payload.message_id))
+                if emoji != None:
+                    role = emoji.get(payload.emoji.name)
+                    if role != None:
+                        role_id = int(role.replace('<','').replace('>','').replace('@','').replace('&',''))
+                        role_ = self.bot.get_guild(payload.guild_id).get_role(role_id)
+                        await payload.member.add_roles(role_)
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        user = await self.bot.get_guild(payload.guild_id).fetch_member(payload.user_id)
+        if user != self.bot.user:
+            settings = self.load_settings()["autoroles"].get(str(payload.guild_id))
+            if settings != None:
+                emoji = settings.get(str(payload.message_id))
+                if emoji != None:
+                    role = emoji.get(payload.emoji.name)
+                    if role != None:
+                        role_id = int(role.replace('<','').replace('>','').replace('@','').replace('&',''))
+                        role_ = self.bot.get_guild(payload.guild_id).get_role(role_id)
+                        await user.remove_roles(role_)
+
     # Control the bitrate for VC management
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
