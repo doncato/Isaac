@@ -15,6 +15,15 @@ to know that this reaction is typically the last thing that is done in a command
 ## Events
 Isaac will respond to different events on the server:
 
++ status change
+    if a member switches from online/dnd to idle/offline while being connected to a voice channel,
+    Isaac will mute that user, as it's assumed that the user is now inactive. This is to avoid
+    disruption of the voice chat and humiliation of the inactive user. If a user switches back from
+    offline/idle to online/dnd while being in a voice channel, the user will also be unmuted **IF**
+    he was previously muted by the bot itself. (That way it should **NOT** be possible to abuse this feature
+    to unmute yourself without proper permission)
+
+    Yet there's no way to configure this behaviour, but this will be changed somewhen. 
 + ban
     if a member gets banned, there will be a reaction in the system channel
     this event can be customized in the setting "send_ban_msg"
