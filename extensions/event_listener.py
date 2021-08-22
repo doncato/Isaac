@@ -18,6 +18,30 @@ class events(commands.Cog):
         return data
 
     @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        # Check if the user is connected to a vc first
+        if after.voice == None:
+            return
+        # If user was online and is offline or idle now...
+        if (before.status == discord.Status.online or before.status == discord.Status.dnd) and (after.status == discord.Status.offline or after.status == discord.Status.idle):
+            # ...and not already muted...
+            if not after.voice.mute:
+                # ...mute that user
+                await after.edit(mute=True, reason="User not active")
+
+        # If user was offline or idle and is online or dnd now...
+        elif (before.status == discord.Status.offline or before.status == discord.Status.idle) and (after.status == discord.Status.online or after.status == discord.Status.dnd):
+            # ...check* who was the one muting the user...
+            async for e in after.guild.audit_logs(limit=250, action = discord.AuditLogAction.member_update):
+                if e.target == after and e.after.mute:
+                    # ...if it was the bot itself unmute him
+                    if e.user.id == self.bot.user.id:
+                        await after.edit(mute=False, reason="User active again")
+                    break
+
+        # *The check is implemented to avoid a user being muted by a mod being able to unmute himself, by changing his presence from on>idle>on
+
+    @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
         channel = guild.system_channel
         send_welcome = self.load_settings()['settings']["send_ban_msg"]
