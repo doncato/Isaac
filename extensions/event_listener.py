@@ -2,20 +2,15 @@
 # Author: https://github.com/doncato
 # Created on: 10/07/21
 
-import os,discord,json,random,time
+import os,discord,random,time
 from discord.ext import commands
-
+import _utils
 
 class events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.filepath = os.path.join(os.path.dirname(__file__), '../settings.json')
         self.greek_alphabet = ['Alpha','Beta','Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega']
-
-    def load_settings(self):
-        with open(self.filepath, 'r') as f:
-            data = json.load(f)
-        return data
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
@@ -32,7 +27,7 @@ class events(commands.Cog):
         # If user was offline or idle and is online or dnd now...
         elif (before.status == discord.Status.offline or before.status == discord.Status.idle) and (after.status == discord.Status.online or after.status == discord.Status.dnd):
             # ...check* who was the one muting the user...
-            async for e in after.guild.audit_logs(limit=250, action = discord.AuditLogAction.member_update):
+            async for e in after.guild.audit_logs(limit=250, action=discord.AuditLogAction.member_update):
                 if e.target == after and e.after.mute:
                     # ...if it was the bot itself unmute him
                     if e.user.id == self.bot.user.id:
@@ -44,30 +39,53 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
         channel = guild.system_channel
-        send_welcome = self.load_settings()['settings']["send_ban_msg"]
+        send_welcome = _utils.load_settings()['settings']["send_ban_msg"]
         send = str(send_welcome.get(str(guild.id)))
         if str(send) != "." and send != None:
             await channel.send(embed=discord.Embed(title=f'{user.name} got Banned!', color=discord.Color.blue(), description=send))
     @commands.Cog.listener()
     async def on_member_unban(self, guild, user):
         channel = guild.system_channel
-        send_welcome = self.load_settings()['settings']["send_unban_msg"]
+        send_welcome = _utils.load_settings()['settings']["send_unban_msg"]
         send = send_welcome.get(str(guild.id))
         if str(send) != "." and send != None:
             await channel.send(embed=discord.Embed(title=f'{user.name} got Unbanned', color=discord.Color.blue(), description=send))
     @commands.Cog.listener()
     async def on_member_join(self, member):
+        # Send welcome Message
         channel = member.guild.system_channel
-        send_welcome = self.load_settings()['settings']["send_welcome_msg"]
+        send_welcome = _utils.load_settings()['settings']["send_welcome_msg"]
+        count_channel = _utils.load_settings()['settings']["member_count_channel_id"]
         send = send_welcome.get(str(member.guild.id))
+        count = count_channel.get(str(member.guild.id))
         if str(send) != "." and send != None:
             await channel.send(embed=discord.Embed(title=f'{member.name} just joined!', color=discord.Color.blue(), description=send))
-    
+        # Member counter
+        if str(count) != "." and count != None and not member.bot:
+            try:
+                id = int(count)
+            except:
+                pass
+            else:
+                await _utils.change_trailing_channel_num(member.guild, id)
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        # Member counter
+        count_channel = _utils.load_settings()['settings']["member_count_channel_id"]
+        count = count_channel.get(str(member.guild.id))
+        if str(count) != "." and count != None and not member.bot:
+            try:
+                id = int(count)
+            except:
+                pass
+            else:
+                await _utils.change_trailing_channel_num(member.guild, id, False)
+
     # Autoroles, will check settings and try to add a role upon a reaction by the user on set message.
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if payload.member != self.bot.user:
-            settings = self.load_settings()["autoroles"].get(str(payload.guild_id))
+            settings = _utils.load_settings()["autoroles"].get(str(payload.guild_id))
             if settings != None:
                 emoji = settings.get(str(payload.message_id))
                 if emoji != None:
@@ -80,7 +98,7 @@ class events(commands.Cog):
     async def on_raw_reaction_remove(self, payload):
         user = await self.bot.get_guild(payload.guild_id).fetch_member(payload.user_id)
         if user != self.bot.user:
-            settings = self.load_settings()["autoroles"].get(str(payload.guild_id))
+            settings = _utils.load_settings()["autoroles"].get(str(payload.guild_id))
             if settings != None:
                 emoji = settings.get(str(payload.message_id))
                 if emoji != None:
@@ -90,9 +108,9 @@ class events(commands.Cog):
                         role_ = self.bot.get_guild(payload.guild_id).get_role(role_id)
                         await user.remove_roles(role_)
 
-    # Control the bitrate for VC management
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        # Control the bitrate for VC management
         if member != self.bot.user:
             if after.channel != None and after.channel.name.startswith('µ') and after.channel.user_limit <= 3 and after.channel.user_limit != 0:
                 channel_name = None
@@ -118,6 +136,29 @@ class events(commands.Cog):
                     await before.channel.delete()
                 elif len(before.channel.members) == 1:
                     await before.channel.edit(bitrate=8_000)
+            # When a member joins a new voice channel, and didn't move
+            if before.channel is None and after.channel != None:
+                count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
+                count = count_channel.get(str(member.guild.id))
+                if str(count) != "." and count != None and not member.bot:
+                    try:
+                        id = int(count)
+                    except:
+                        pass
+                    else:
+                        await _utils.change_trailing_channel_num(member.guild, id)
+                
+            # When a member leaves a voice channel
+            if after.channel is None and before.channel != None:
+                count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
+                count = count_channel.get(str(member.guild.id))
+                if str(count) != "." and count != None and not member.bot:
+                    try:
+                        id = int(count)
+                    except:
+                        pass
+                    else:
+                        await _utils.change_trailing_channel_num(member.guild, id, False)
 
 def setup(bot):
     bot.remove_cog(events)

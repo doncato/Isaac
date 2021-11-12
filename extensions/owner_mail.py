@@ -2,8 +2,9 @@
 # Author: https://github.com/doncato
 # Created on: 10/07/21
 
-import os,discord,json,random,time
+import os,discord,json
 from discord.ext import commands
+import _utils
 
 class mail(commands.Cog):
     def __init__(self, bot):
@@ -16,12 +17,6 @@ class mail(commands.Cog):
             '🔉': [2, 'The Bot-Owner has acknowledged your submission.\nPriority: Medium'],
             '🔊': [3, 'The Bot-Owner has acknowledged your submission.\nPriority: High'],
         }
-    
-
-    def load_settings(self):
-        with open(self.filepath, 'r') as f:
-            data = json.load(f)
-        return data
 
     async def send_dm(self, recipient_id: int, message):
         user = self.bot.get_user(recipient_id)
@@ -33,7 +28,7 @@ class mail(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if payload.user_id != self.bot.user.id:
-            settings = self.load_settings()
+            settings = _utils.load_settings()
             bugs = settings["bugs"]
             message = payload.message_id
             owner = self.bot.get_user(self.bot.owner_id)
@@ -66,7 +61,7 @@ class mail(commands.Cog):
         channel = owner.dm_channel
         if channel == None:
             channel = await owner.create_dm()
-        bugs = self.load_settings()["bugs"]
+        bugs = _utils.load_settings()["bugs"]
         high = []
         medium = []
         low = []
@@ -109,7 +104,7 @@ class mail(commands.Cog):
     @commands.cooldown(1, '300')
     async def bug(self, ctx, *description):
         desc = ' '.join(description)        
-        settings = self.load_settings()
+        settings = _utils.load_settings()
         bugs = settings["bugs"]
 
         msg = discord.Embed(title=f'Bug!', color=discord.Color.from_rgb(255, 0, 0), description=f'You have a new bug submitted by *{ctx.author}*!')

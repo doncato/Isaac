@@ -3,6 +3,7 @@
 # Created on: 10/07/21
 
 import os,discord,json
+import _utils
 from discord.ext import commands
 
 
@@ -12,16 +13,11 @@ class system(commands.Cog):
         self.filepath = os.path.join(os.path.dirname(__file__), '../settings.json')
         self.docpath = os.path.join(os.path.dirname(__file__), '../src/docs.md')
         self.logpath = os.path.join(os.path.dirname(__file__), '../src/isaac.log')
-
-    def load_settings(self):
-        with open(self.filepath, 'r') as f:
-            data = json.load(f)
-        return data
     
     @commands.command(name='autoroles', brief='Set autoroles for the server!')
     @commands.has_permissions(administrator=True)
     async def autoroles(self, ctx, action="show", message_id=0, emoji='', role_id=0, channel_id=0):
-        og_set = self.load_settings()
+        og_set = _utils.load_settings()
         settings = og_set['autoroles']
 
         if action.lower() == "show":
@@ -70,11 +66,41 @@ class system(commands.Cog):
     async def vcmanage(self, ctx):
         await ctx.send(embed=discord.Embed(title='Voice Channels', color=(ctx.guild.get_member_named(str(self.bot.user))).color, description='The bot can create and delete voice chats automatically. Voice chats that start with \'µ\' in their name will spawn a new vc on connection by a user, and move that user in that vc. Channels that end with \'µ\' are mainly used by the bot, and mark temporary channels, which will be deleted if all users left. Note: The Create-vc channel has to have a userlimit between 1 and 3 (enpoints included)'))
 
+    @commands.command(name="refresh-counter", brief="Refresh the member and voice state counter")
+    @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 30)
+    async def refresh(self, ctx):
+        voice_count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
+        member_count_channel = _utils.load_settings()['settings']["member_count_channel_id"]
+        voice_count = voice_count_channel.get(str(ctx.guild.id))
+        member_count = member_count_channel.get(str(ctx.guild.id))
+        c = 0
+        v = 0
+        for m in ctx.guild.members:
+            if not m.bot:
+                c += 1
+            if m.voice is not None:
+                v += 1
+        if str(voice_count) != "." and voice_count != None:
+            try:
+                v_id = int(voice_count)
+            except:
+                pass
+            else:
+                _utils.edit_trailing_channel_num(ctx.guild, v_id, v)
+        if str(member_count) != "." and member_count != None:
+            try:
+                m_id = int(member_count)
+            except:
+                pass
+            else:
+                _utils.edit_trailing_channel_num(ctx.guild, m_id, c)
+    
     @commands.command(name='set', brief='Set a setting for the settings', help='By leaving fields empty you can get the current settings')
     @commands.has_permissions(administrator=True)
     async def setting(self, ctx, setting=None, value=None):
         txt = None
-        settings = self.load_settings()
+        settings = _utils.load_settings()
         option = settings["settings"].get(setting)
         if setting == None:
             txt = f'Available settings are:\n{", ".join(settings["settings"].keys())}'

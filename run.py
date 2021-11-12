@@ -1,8 +1,8 @@
-# bot.py / IsaacII Discord Bot
+# run.py / IsaacII Discord Bot
 # Author: https://github.com/doncato
 # Created on: 27/01/20
-bot_ver = '2.4.4'
-ver_rel = '30/03/21'
+bot_ver = '3.0.0'
+ver_rel = '09/11/21'
 
 #
 
@@ -64,7 +64,7 @@ class core(commands.Cog):
         for f in files:
             fn = f.split('.')
             f_ = fn[0]
-            if fn[-1] == 'py' and f != __file__.split('/')[-1]:
+            if fn[-1] == 'py' and f != __file__.split('/')[-1] and not f_.startswith("_"):
                 if bot.extensions.get(f'extensions.{f_}') == None:
                     self.bot.load_extension(f'extensions.{f_}')
                 else:
@@ -81,7 +81,7 @@ class core(commands.Cog):
             txt = (f'Relax, I didn\'t think you were that impatient\n//Wait another {math.ceil(error.retry_after)} seconds//')
         else:
             txt = (f'Well that didn\' work, I got an Error msg for you tho...\n//{error}//')
-        error_msg = embed=discord.Embed(title='Whoopsie UwU', color=(ctx.guild.get_member_named(str(bot.user))).color, description=txt)
+        error_msg = embed=discord.Embed(title='Error *beep* *boop*', color=(ctx.guild.get_member_named(str(bot.user))).color, description=txt)
         error_msg.set_footer(text='Are you experiencing bugs?\nPlease report them by using the bug command: µ bug <your bug here> or informing the bot owner\nFurther information: µ help bug')
         await ctx.send(embed=error_msg)
     #'''
@@ -102,7 +102,20 @@ class core(commands.Cog):
         self.load()
         await ctx.message.add_reaction('✅')
 
-   
+    @commands.command(name='unload', aliases=['uload', 'ul'], brief="Unload all extensions", help=\
+        'This command Unloads all python files that are in the extensions directory')
+    @commands.is_owner()
+    async def unload(self, ctx):
+        dir_list = os.path.join(os.path.dirname(__file__), 'extensions')
+        files = os.listdir(dir_list)
+        for f in files:
+            fn = f.split('.')
+            f_ = fn[0]
+            if fn[-1] == 'py' and f != __file__.split('/')[-1]:
+                if bot.extensions.get(f'extensions.{f_}') == None:
+                    self.bot.unload_extension(f'extensions.{f_}')
+        await ctx.message.add_reaction('✅')
+
     @commands.command(name='stat', aliases=['info', 'status', 'stats'], brief='Get Bot information')
     async def info(self, ctx):
         now = datetime.datetime.now().replace(microsecond=0)

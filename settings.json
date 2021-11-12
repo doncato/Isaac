@@ -1,9 +1,10 @@
 {
   "settings": {
-    "vc_vol": {},
     "send_welcome_msg": {},
     "send_ban_msg": {},
     "send_unban_msg": {},
+    "member_count_channel_id": {},
+    "voice_count_channel_id": {},
     "utc_offset": {}
   },
   "autoroles": {
