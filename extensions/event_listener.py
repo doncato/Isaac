@@ -140,6 +140,7 @@ class events(commands.Cog):
             if before.channel is None and after.channel != None:
                 count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
                 count = count_channel.get(str(member.guild.id))
+                voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image_id"].get(str(member.guild.id))
                 if str(count) != "." and count != None and not member.bot:
                     try:
                         id = int(count)
@@ -147,11 +148,22 @@ class events(commands.Cog):
                         pass
                     else:
                         await _utils.change_trailing_channel_num(member.guild, id)
+                if str(voice_in_server_image) != "." and voice_in_server_image != None:
+                    settings = _utils.load_settings()
+                    v = settings["counter"]["voice_users"].get(str(member.guild.id))
+                    if v is None:
+                        v = 1
+                    else:
+                        v += 1
+                    _utils.edit_server_icon_num(member.guild, v)
+                    settings["counter"]["voice_users"][str(member.guild.id)] = v
+                    _utils.save_settings(settings)
                 
             # When a member leaves a voice channel
             if after.channel is None and before.channel != None:
                 count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
                 count = count_channel.get(str(member.guild.id))
+                voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image_id"].get(str(member.guild.id))
                 if str(count) != "." and count != None and not member.bot:
                     try:
                         id = int(count)
@@ -159,6 +171,16 @@ class events(commands.Cog):
                         pass
                     else:
                         await _utils.change_trailing_channel_num(member.guild, id, False)
+                if str(voice_in_server_image) != "." and voice_in_server_image != None:
+                    settings = _utils.load_settings()
+                    v = settings["counter"]["voice_users"].get(str(member.guild.id))
+                    if v is None:
+                        v = 0
+                    else:
+                        v -= 1
+                    _utils.edit_server_icon_num(member.guild, v)
+                    settings["counter"]["voice_users"][str(member.guild.id)] = v
+                    _utils.save_settings(settings)
 
 def setup(bot):
     bot.remove_cog(events)

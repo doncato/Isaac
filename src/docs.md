@@ -144,14 +144,15 @@ You can check the available settings by leaving settings and value to it's defau
 get the current value of a setting by specifying a setting but no value.
 
 At the moment there are the following Settings:
-| Name                    | Type | Usage / Meaning                          |
-| ----------------------- | ---- | ---------------------------------------- |
-| send_welcome_msg        | Text | Text to send when a new member joins     |
-| send_ban_msg            | Text | Text to send when a member gets banned   |
-| send_unban_msg          | Text | Text to send when a member gets unbanned |
-| member_count_channel_id | Int  | Channel ID to display the member count   |
-| voice_count_channel_id  | Int  | Channel ID to display the voice count    |
-| utc_offset              | Int  | EXPERIMENTAL: utc offset for timezone    |
+| Name                    | Type | Usage / Meaning                            |
+| ----------------------- | ---- | ------------------------------------------ |
+| send_welcome_msg        | Text | Text to send when a new member joins       |
+| send_ban_msg            | Text | Text to send when a member gets banned     |
+| send_unban_msg          | Text | Text to send when a member gets unbanned   |
+| member_count_channel_id | Int  | Channel ID to display the member count     |
+| voice_count_channel_id  | Int  | Channel ID to display the voice count      |
+| voice_in_server_image   | Bool | Whether to show voice count in server icon |
+| utc_offset              | Int  | EXPERIMENTAL: utc offset for timezone      |
 
 _Notes:_
 + There's no backcheck if your settings are correct so pay attention to their

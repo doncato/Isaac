@@ -74,6 +74,7 @@ class system(commands.Cog):
         member_count_channel = _utils.load_settings()['settings']["member_count_channel_id"]
         voice_count = voice_count_channel.get(str(ctx.guild.id))
         member_count = member_count_channel.get(str(ctx.guild.id))
+        voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image_id"].get(str(ctx.guild.id))
         c = 0
         v = 0
         for m in ctx.guild.members:
@@ -95,6 +96,13 @@ class system(commands.Cog):
                 pass
             else:
                 _utils.edit_trailing_channel_num(ctx.guild, m_id, c)
+        if str(voice_in_server_image) != "." and voice_in_server_image != None:
+            _utils.edit_server_icon_num(ctx.guild, v)
+            settings = _utils.load_settings()
+            settings["counter"]["voice_users"][str(ctx.guild.id)] = v
+            _utils.save_settings(settings)
+
+        await ctx.message.add_reaction('✅')
     
     @commands.command(name='set', brief='Set a setting for the settings', help='By leaving fields empty you can get the current settings')
     @commands.has_permissions(administrator=True)
