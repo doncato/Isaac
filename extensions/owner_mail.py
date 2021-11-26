@@ -4,7 +4,7 @@
 
 import os,discord,json
 from discord.ext import commands
-import _utils
+import extensions._utils as _utils
 
 class mail(commands.Cog):
     def __init__(self, bot):

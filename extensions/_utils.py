@@ -1,5 +1,6 @@
-import os,json
+import os,json,requests
 from PIL import Image,ImageDraw,ImageFont
+from io import BytesIO,StringIO
 
 def load_settings():
     with open(os.path.join(os.path.dirname(__file__), '../settings.json'), 'r') as f:
@@ -38,19 +39,30 @@ async def edit_trailing_channel_num(guild, channel_id: int, num: int):
             return False
 
 async def edit_server_icon_num(guild, num: int):
-    coordinates = [(0, 0), (100, 100)]
-    text_anchor = [50, 50]
+    if num < 0:
+        num = 0
+    elif num > 9:
+        num = "+"
+    current_icon = BytesIO(await guild.icon_url.read())
+    # These are the settings for the positions and stuff
+    with Image.open(current_icon) as f:
+        size = f.size
+    coordinates = [(int(0.1*size[0]), int(0.1*size[1])), (int(0.4*size[0]), int(0.4*size[1]))]
+    text_anchor = [int(0.25*size[0]), int(0.25*size[1])]
     text_rgb = (200, 200, 200)
-    text_font = ImageFont.truetype(font=os.path.join(os.path.dirname(__file__), '../rsc/TempestApache.otf'), size=36)
+    text_font = ImageFont.truetype(font=os.path.join(os.path.dirname(__file__), '../rsc/TempestApache.otf'), size=int(0.4*size[0]))
     outline_rgb = (88, 101, 242) # Should match discords blue
     fill_rgb = (88, 101, 242) # Should match discords blue
     
-    new_icon = bytearray()
-    with Image.open(guild.icon_url.read()) as icon:
-        draw = ImageDraw.draw(icon)
+    with Image.open(current_icon) as icon:
+        draw = ImageDraw.Draw(icon)
         draw.ellipse(coordinates, outline=outline_rgb, fill=fill_rgb)
         draw.text(text_anchor, str(num), font=text_font, anchor="mm", fill=text_rgb, align='center')
-        icon.save(new_icon, format="PNG")
-        await guild.edit(icon=new_icon)
+        current_icon.seek(0)
+        icon.save(current_icon, format="PNG")
+        current_icon.seek(0)
 
-    del new_icon
+    await guild.edit(icon=current_icon.read())
+
+    del current_icon
+    del icon

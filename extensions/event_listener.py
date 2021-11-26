@@ -4,7 +4,7 @@
 
 import os,discord,random,time
 from discord.ext import commands
-import _utils
+import extensions._utils as _utils
 
 class events(commands.Cog):
     def __init__(self, bot):
@@ -140,7 +140,7 @@ class events(commands.Cog):
             if before.channel is None and after.channel != None:
                 count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
                 count = count_channel.get(str(member.guild.id))
-                voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image_id"].get(str(member.guild.id))
+                voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image"].get(str(member.guild.id))
                 if str(count) != "." and count != None and not member.bot:
                     try:
                         id = int(count)
@@ -155,7 +155,7 @@ class events(commands.Cog):
                         v = 1
                     else:
                         v += 1
-                    _utils.edit_server_icon_num(member.guild, v)
+                    await _utils.edit_server_icon_num(member.guild, v)
                     settings["counter"]["voice_users"][str(member.guild.id)] = v
                     _utils.save_settings(settings)
                 
@@ -163,7 +163,7 @@ class events(commands.Cog):
             if after.channel is None and before.channel != None:
                 count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
                 count = count_channel.get(str(member.guild.id))
-                voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image_id"].get(str(member.guild.id))
+                voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image"].get(str(member.guild.id))
                 if str(count) != "." and count != None and not member.bot:
                     try:
                         id = int(count)
@@ -178,7 +178,7 @@ class events(commands.Cog):
                         v = 0
                     else:
                         v -= 1
-                    _utils.edit_server_icon_num(member.guild, v)
+                    await _utils.edit_server_icon_num(member.guild, v)
                     settings["counter"]["voice_users"][str(member.guild.id)] = v
                     _utils.save_settings(settings)
 

@@ -3,7 +3,7 @@
 # Created on: 10/07/21
 
 import os,discord,json
-import _utils
+import extensions._utils as _utils
 from discord.ext import commands
 
 
@@ -66,15 +66,19 @@ class system(commands.Cog):
     async def vcmanage(self, ctx):
         await ctx.send(embed=discord.Embed(title='Voice Channels', color=(ctx.guild.get_member_named(str(self.bot.user))).color, description='The bot can create and delete voice chats automatically. Voice chats that start with \'µ\' in their name will spawn a new vc on connection by a user, and move that user in that vc. Channels that end with \'µ\' are mainly used by the bot, and mark temporary channels, which will be deleted if all users left. Note: The Create-vc channel has to have a userlimit between 1 and 3 (enpoints included)'))
 
-    @commands.command(name="refresh-counter", brief="Refresh the member and voice state counter")
+    @commands.command(name="refresh-counter", brief="Refresh the member and voice state counter optionally provide the value for the voice state counter")
     @commands.has_permissions(administrator=True)
     @commands.cooldown(1, 30)
-    async def refresh(self, ctx):
+    async def refresh(self, ctx, value=None):
+        try:
+            value = int(value)
+        except:
+            value = None
         voice_count_channel = _utils.load_settings()['settings']["voice_count_channel_id"]
         member_count_channel = _utils.load_settings()['settings']["member_count_channel_id"]
         voice_count = voice_count_channel.get(str(ctx.guild.id))
         member_count = member_count_channel.get(str(ctx.guild.id))
-        voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image_id"].get(str(ctx.guild.id))
+        voice_in_server_image = _utils.load_settings()['settings']["voice_in_server_image"].get(str(ctx.guild.id))
         c = 0
         v = 0
         for m in ctx.guild.members:
@@ -82,6 +86,8 @@ class system(commands.Cog):
                 c += 1
             if m.voice is not None:
                 v += 1
+        if value != None:
+            v = value
         if str(voice_count) != "." and voice_count != None:
             try:
                 v_id = int(voice_count)
@@ -97,7 +103,7 @@ class system(commands.Cog):
             else:
                 _utils.edit_trailing_channel_num(ctx.guild, m_id, c)
         if str(voice_in_server_image) != "." and voice_in_server_image != None:
-            _utils.edit_server_icon_num(ctx.guild, v)
+            await _utils.edit_server_icon_num(ctx.guild, v)
             settings = _utils.load_settings()
             settings["counter"]["voice_users"][str(ctx.guild.id)] = v
             _utils.save_settings(settings)
